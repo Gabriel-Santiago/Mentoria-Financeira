@@ -43,4 +43,11 @@ public class Familia {
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Cliente filhos;
+
+    public Familia(String nome, Date dataNascimento, Long renda, Ocupacao ocupacao) {
+        this.nome = nome;
+        this.dataNascimento = dataNascimento;
+        this.renda = renda;
+        this.ocupacao = ocupacao;
+    }
 }
