@@ -4,6 +4,7 @@ import com.mentoria.financeira.enums.Ocupacao;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -14,11 +15,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 @Table(name = "familia")
-@Entity
+@Entity(name = "familia")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,14 +31,16 @@ public class Familia {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
     private String nome;
-    private LocalDate dataNascimento;
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private Date dataNascimento;
     private Long renda;
 
     @Enumerated(EnumType.STRING)
     private Ocupacao ocupacao;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     private Cliente conjuge;
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     private Cliente filhos;
 }

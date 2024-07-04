@@ -2,6 +2,7 @@ package com.mentoria.financeira.model;
 
 import com.mentoria.financeira.enums.EstadoCivil;
 import com.mentoria.financeira.enums.Ocupacao;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Entity;
@@ -15,12 +16,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Table(name = "clientes")
-@Entity
+@Entity(name = "clientes")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -33,7 +35,8 @@ public class Cliente {
     private String telefone;
     private String email;
     private Long renda;
-    private LocalDate dataNascimento;
+    @DateTimeFormat(pattern = "dd-MM-yyyy")
+    private Date dataNascimento;
     private String cep;
     private String bairro;
     private String logradouro; // rua
@@ -46,9 +49,9 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private EstadoCivil estadoCivil;
 
-    @OneToOne
+    @OneToOne(mappedBy = "clientes", cascade = CascadeType.ALL, orphanRemoval = true)
     private Familia conjuge;
 
-    @OneToMany
+    @OneToMany(mappedBy = "clientes", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Familia> filhos;
 }
