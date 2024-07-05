@@ -65,11 +65,11 @@ public class ClienteService {
     }
 
     public Familia procurarPorConjuge(Cliente cliente){
-        return clienteRepository.procurarPorConjuge(cliente);
+        return clienteRepository.findByConjuge(cliente);
     }
 
     public List<Familia> procurarPorFilhos(Cliente cliente){
-        List<Familia> filhos = clienteRepository.procurarPorFilhos(cliente);
+        List<Familia> filhos = clienteRepository.findByFilhos(cliente);
         return filhos != null ? filhos : new ArrayList<>();
     }
 

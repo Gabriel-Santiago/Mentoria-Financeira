@@ -1,7 +1,9 @@
 package com.mentoria.financeira.viaCep;
 
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+@Component
 public class ViaCep {
 
     private static final String VIA_CEP_URL = "https://viacep.com.br/ws/";

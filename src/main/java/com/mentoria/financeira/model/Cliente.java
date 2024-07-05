@@ -49,9 +49,9 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private EstadoCivil estadoCivil;
 
-    @OneToOne(mappedBy = "clientes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "conjuge", cascade = CascadeType.ALL, orphanRemoval = true)
     private Familia conjuge;
 
-    @OneToMany(mappedBy = "clientes", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "filhos", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Familia> filhos;
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface ClienteRepository extends JpaRepository<Cliente, String> {
 
-    Familia procurarPorConjuge(Cliente cliente);
+    Familia findByConjuge(Cliente cliente);
 
-    List<Familia> procurarPorFilhos(Cliente cliente);
+    List<Familia> findByFilhos(Cliente cliente);
 }
