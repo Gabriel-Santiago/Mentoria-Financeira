@@ -16,13 +16,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
-@Table(name = "clientes")
-@Entity(name = "clientes")
+@Table(name = "cliente")
+@Entity(name = "cliente")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,11 +31,11 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private Long id;
+    private String nome;
     private String telefone;
     private String email;
     private Long renda;
-    @DateTimeFormat(pattern = "dd-MM-yyyy")
-    private Date dataNascimento;
+    private LocalDate dataNascimento;
     private String cep;
     private String bairro;
     private String logradouro; // rua
@@ -49,9 +48,9 @@ public class Cliente {
     @Enumerated(EnumType.STRING)
     private EstadoCivil estadoCivil;
 
-    @OneToOne(mappedBy = "conjuge", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Familia conjuge;
+    @OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Conjuge conjuge;
 
-    @OneToMany(mappedBy = "filhos", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Familia> filhos;
+    @OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Filho> filhos;
 }

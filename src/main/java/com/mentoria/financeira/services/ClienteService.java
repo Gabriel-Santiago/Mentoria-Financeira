@@ -1,15 +1,14 @@
 package com.mentoria.financeira.services;
 
-import com.mentoria.financeira.dtos.ClienteDTO;
+import com.mentoria.financeira.dtos.CriarClienteDTO;
 import com.mentoria.financeira.model.Cliente;
-import com.mentoria.financeira.model.Familia;
 import com.mentoria.financeira.repositorys.ClienteRepository;
 import com.mentoria.financeira.viaCep.Address;
 import com.mentoria.financeira.viaCep.ViaCep;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -33,19 +32,31 @@ public class ClienteService {
         return true;
     }
 
-    public void criarUsuario(ClienteDTO dto) throws Exception {
-        if(naoEhNulo(dto.id(), dto.cep(), dto.estadoCivil(),
-                dto.dataNascimento(),dto.email(), dto.ocupacao(),
-                dto.renda(), dto.telefone())){
-            throw new IllegalArgumentException("Não pode criar o usuário: Um ou mais espaços estão nulos.");
-        }
+    @Transactional
+    public void criarUsuario(CriarClienteDTO dto) throws Exception {
 
         Address address = viaCep.viaCep(dto.cep());
 
-        Cliente cliente = new Cliente(dto.id(), dto.telefone(), dto.email(), dto.renda(),
-                dto.dataNascimento(), dto.cep(), address.getBairro(), address.getLogradouro(),
-                address.getLocalidade(), address.getUf(), dto.ocupacao(), dto.estadoCivil(),
-                dto.conjuge(), dto.filhos());
+        Cliente cliente = clienteRepository.findById(String.valueOf(dto.id())).orElse(new Cliente());
+
+        if (!naoEhNulo(dto.telefone(), dto.email(), dto.renda(),  dto.dataNascimento(), dto.cep(),
+                address.getBairro(), address.getLogradouro(), address.getLocalidade(),
+                address.getUf(), dto.ocupacao(), dto.estadoCivil())) {
+            throw new IllegalArgumentException("Não pode criar o cliente: Um ou mais espaços estão nulos.");
+        }
+
+        cliente.setNome(dto.nome());
+        cliente.setTelefone(dto.telefone());
+        cliente.setEmail(dto.email());
+        cliente.setRenda(dto.renda());
+        cliente.setDataNascimento(dto.dataNascimento());
+        cliente.setCep(dto.cep());
+        cliente.setBairro(address.getBairro());
+        cliente.setLogradouro(address.getLogradouro());
+        cliente.setLocalidade(address.getLocalidade());
+        cliente.setUf(address.getUf());
+        cliente.setOcupacao(dto.ocupacao());
+        cliente.setEstadoCivil(dto.estadoCivil());
 
         clienteRepository.save(cliente);
     }
@@ -64,40 +75,35 @@ public class ClienteService {
         return clienteRepository.findAll();
     }
 
-    public Familia procurarPorConjuge(Cliente cliente){
-        return clienteRepository.findByConjuge(cliente);
-    }
-
-    public List<Familia> procurarPorFilhos(Cliente cliente){
-        List<Familia> filhos = clienteRepository.findByFilhos(cliente);
-        return filhos != null ? filhos : new ArrayList<>();
-    }
-
-    public void atualizarCliente(Long id, ClienteDTO dto){
+    public void atualizarCliente(Long id, CriarClienteDTO dto) throws Exception {
         Cliente cliente = clienteRepository.findById(String.valueOf(id))
-                .orElseThrow(RuntimeException::new);
+                .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
 
-        if(naoEhNulo(dto.id(), dto.cep(), dto.estadoCivil(),
-                dto.dataNascimento(),dto.email(), dto.ocupacao(),
-                dto.renda(), dto.telefone())){
+        Address address = viaCep.viaCep(dto.cep());
 
-            cliente.setCep(dto.cep());
-            cliente.setEstadoCivil(dto.estadoCivil());
-            cliente.setDataNascimento(dto.dataNascimento());
-            cliente.setEmail(dto.email());
-            cliente.setOcupacao(dto.ocupacao());
-            cliente.setRenda(dto.renda());
-            cliente.setTelefone(dto.telefone());
-            cliente.setConjuge(dto.conjuge());
-            cliente.setFilhos(dto.filhos());
+        if(cliente != null){
+            if(!cliente.getCep().equals(dto.cep())){
+                cliente.setNome(dto.nome());
+                cliente.setCep(dto.cep());
+                cliente.setBairro(address.getBairro());
+                cliente.setLogradouro(address.getLogradouro());
+                cliente.setLocalidade(address.getLocalidade());
+                cliente.setUf(address.getUf());
+                cliente.setEstadoCivil(dto.estadoCivil());
+                cliente.setDataNascimento(dto.dataNascimento());
+                cliente.setEmail(dto.email());
+                cliente.setOcupacao(dto.ocupacao());
+                cliente.setRenda(dto.renda());
+                cliente.setTelefone(dto.telefone());
+
+                clienteRepository.save(cliente);
+            }
         }
-
-        clienteRepository.save(cliente);
     }
 
     public void apagarCliente(Long id){
         if(!clienteRepository.existsById(String.valueOf(id))){
-            throw new RuntimeException("Cliente não encontrado pleo id" + id);
+            throw new RuntimeException("Cliente não encontrado pelo id" + id);
         }
 
         Cliente cliente = procurarCliente(id);
