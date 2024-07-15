@@ -31,11 +31,11 @@ public class FilhoController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<List<FilhoDTO>> buscarFilhos(@PathVariable("id") Long cliente_id){
         List<FilhoDTO> filhos = service.procurarFilho(cliente_id);
 
-        return new ResponseEntity<>(filhos != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(filhos, filhos != null ? HttpStatus.OK : HttpStatus.NOT_FOUND);
     }
 
     @PutMapping("{cliente_id}/{filho_id}")

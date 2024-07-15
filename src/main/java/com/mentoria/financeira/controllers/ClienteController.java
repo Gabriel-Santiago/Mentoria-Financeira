@@ -49,7 +49,7 @@ public class ClienteController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Void> atualizarCliente(@PathVariable("id") Long id, CriarClienteDTO dto) throws Exception {
+    public ResponseEntity<Void> atualizarCliente(@PathVariable("id") Long id, @RequestBody CriarClienteDTO dto) throws Exception {
         service.atualizarCliente(id, dto);
         return new ResponseEntity<>(HttpStatus.OK);
     }

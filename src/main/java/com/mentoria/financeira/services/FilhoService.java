@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,27 +66,13 @@ public class FilhoService {
         if (clienteOptional.isPresent()) {
             Cliente cliente = clienteOptional.get();
 
-            if (cliente.getFilhos().isEmpty()) {
-                return Collections.emptyList();
-            } else {
-                return cliente.getFilhos().stream().map(this::convertToDto).toList();
-//                return cliente.getFilhos().stream()
-//                        .map(this::convertToDto)
-//                        .collect(Collectors.toList());
-            }
+            return cliente.getFilhos().stream()
+                    .map(filho -> new FilhoDTO(filho.getNome(), filho.getDataNascimento(),
+                            filho.getRenda(), filho.getOcupacao()))
+                    .toList();
         } else {
-            return Collections.emptyList();
+            throw new IllegalArgumentException("Nenhum filho encontrado com id do cliente: " + cliente_id);
         }
-    }
-
-    private FilhoDTO convertToDto(Filho filho) {
-        System.out.println("Convertendo Filho para DTO: " + filho);
-        return new FilhoDTO(
-                filho.getNome(),
-                filho.getDataNascimento(),
-                filho.getRenda(),
-                filho.getOcupacao()
-        );
     }
 
     public void atualizarFilho(Long cliente_id, Long filho_id, FilhoDTO dto){
